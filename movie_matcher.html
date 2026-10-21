@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Movie Matcher: Bollywood and Hollywood</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700&family=DM+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#F7F8FB;--sf:#fff;--ink:#172033;--mute:#5B667A;--line:#E3E7EF;--ac:#3B4CCA;--on:#fff;--bw:#B0245C;--bws:#FBE8F0;--hw:#1B62A0;--hws:#E3F0F8;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1320;--sf:#171C2C;--ink:#E8ECF5;--mute:#98A3B8;--line:#2A3248;--ac:#8F9BFF;--on:#0F1320;--bw:#F07BA8;--bws:#3A1B2B;--hw:#6DB7E8;--hws:#17303F;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0F1320;--sf:#171C2C;--ink:#E8ECF5;--mute:#98A3B8;--line:#2A3248;--ac:#8F9BFF;--on:#0F1320;--bw:#F07BA8;--bws:#3A1B2B;--hw:#6DB7E8;--hws:#17303F;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:860px;margin:0 auto;padding:28px 18px 56px}
+h1{font:700 clamp(28px,6vw,40px)/1.1 "Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.02em;margin:0 0 8px}
+h2{font-size:18px;margin:28px 0 4px}
+.sub{color:var(--mute);margin:0 0 22px;max-width:56ch}
+.panel{background:var(--sf);border:1px solid var(--line);border-radius:14px;padding:16px}
+.search{position:relative}
+input{width:100%;font:inherit;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+input:focus-visible,button:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.sug{position:absolute;left:0;right:0;top:100%;margin-top:6px;background:var(--sf);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(20,30,60,.12);z-index:5;overflow:hidden}
+.sug button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:10px 14px;border:0;background:none;color:var(--ink);font:inherit;cursor:pointer}
+.sug button:hover{background:var(--bg)}
+.sug small{color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 6px 5px 12px;border-radius:99px;background:color-mix(in srgb,var(--ac) 14%,transparent);font-weight:500}
+.chip button{border:0;background:none;color:inherit;font-size:18px;line-height:1;cursor:pointer;padding:0 6px}
+.link{border:0;background:none;color:var(--mute);font:inherit;text-decoration:underline;cursor:pointer}
+.quick{margin-top:12px;color:var(--mute)}
+.quick button{margin:6px 6px 0 0;padding:6px 12px;border:1px solid var(--line);border-radius:99px;background:var(--sf);color:var(--ink);font:inherit;cursor:pointer}
+.quick button:hover{border-color:var(--ac)}
+.bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-top:22px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--sf)}
+.seg button{padding:8px 16px;border:0;background:none;color:var(--ink);font:inherit;font-weight:500;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--ac);color:var(--on)}
+.empty{color:var(--mute);padding:36px 0;text-align:center}
+.lead{color:var(--mute);margin:0 0 6px}
+.row{display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:center;padding:16px 0;border-top:1px solid var(--line)}
+.m{font-weight:600;font-size:15px}
+.meter{height:5px;border-radius:3px;background:var(--line);margin-top:5px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--ac)}
+.t{font-weight:600;font-size:17px}
+.y{color:var(--mute);font-weight:400;margin-left:6px}
+.badge{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px;margin-left:8px;vertical-align:2px}
+.B{color:var(--bw);background:var(--bws)}.H{color:var(--hw);background:var(--hws)}
+.g{color:var(--mute);font-size:14px}
+.why{font-size:14px;margin-top:2px}
+.add{padding:8px 14px;border:1px solid var(--ac);border-radius:10px;background:none;color:var(--ac);font:inherit;font-weight:600;cursor:pointer}
+.add:hover{background:var(--ac);color:var(--on)}
+.foot{color:var(--mute);font-size:13px;margin-top:32px}
+@media (max-width:520px){.row{grid-template-columns:44px 1fr}.row .add{grid-column:2;justify-self:start}}
+</style></head><body><main>
+<h1>Movie Matcher</h1>
+<p class="sub">Pick a few movies you love from Bollywood or Hollywood, and get more like them.</p>
+<section class="panel">
+  <div class="search"><input id="q" type="search" placeholder="Search a movie, like Dangal or Inception" autocomplete="off" aria-label="Search movies"><div id="sug" class="sug" hidden></div></div>
+  <div id="chips" class="chips"></div>
+  <div id="quick" class="quick">Not sure? Try <span id="qb"></span></div>
+</section>
+<div class="bar"><div class="seg" id="seg" role="group" aria-label="Show recommendations from"></div></div>
+<div id="out" aria-live="polite"></div>
+<p class="foot">Runs in your browser: TF-IDF over genres, director, cast and keywords, ranked by cosine similarity across 60 movies.</p>
+</main>
+<script>
+const RAW=`Inception|2010|H|Sci-Fi,Action,Thriller|Christopher Nolan|Leonardo DiCaprio,Joseph Gordon-Levitt,Elliot Page|dream,heist,subconscious
+Interstellar|2014|H|Sci-Fi,Adventure,Drama|Christopher Nolan|Matthew McConaughey,Anne Hathaway,Jessica Chastain|space,wormhole,time,father daughter
+The Dark Knight|2008|H|Action,Crime,Thriller|Christopher Nolan|Christian Bale,Heath Ledger,Aaron Eckhart|superhero,vigilante,chaos
+The Matrix|1999|H|Sci-Fi,Action|Wachowskis|Keanu Reeves,Laurence Fishburne,Carrie-Anne Moss|simulation,hacker,reality
+The Godfather|1972|H|Crime,Drama|Francis Ford Coppola|Marlon Brando,Al Pacino,James Caan|mafia,family,power
+Titanic|1997|H|Romance,Drama|James Cameron|Leonardo DiCaprio,Kate Winslet|ship,disaster,love
+Avatar|2009|H|Sci-Fi,Adventure,Action|James Cameron|Sam Worthington,Zoe Saldana,Sigourney Weaver|alien planet,war,nature
+Forrest Gump|1994|H|Drama,Romance,Comedy|Robert Zemeckis|Tom Hanks,Robin Wright,Gary Sinise|history,innocence,journey
+The Shawshank Redemption|1994|H|Drama,Crime|Frank Darabont|Tim Robbins,Morgan Freeman|prison,hope,friendship
+Gladiator|2000|H|Action,Drama,Adventure|Ridley Scott|Russell Crowe,Joaquin Phoenix|rome,revenge,arena
+Avengers: Endgame|2019|H|Action,Sci-Fi,Adventure|Russo Brothers|Robert Downey Jr.,Chris Evans,Scarlett Johansson|superhero,time travel,team
+Toy Story|1995|H|Animation,Family,Comedy|John Lasseter|Tom Hanks,Tim Allen|toys,friendship,rivalry
+The Lion King|1994|H|Animation,Family,Musical,Drama|Roger Allers|Matthew Broderick,Jeremy Irons,James Earl Jones|lion,kingdom,father son
+Jurassic Park|1993|H|Sci-Fi,Adventure,Thriller|Steven Spielberg|Sam Neill,Laura Dern,Jeff Goldblum|dinosaurs,island,survival
+Pulp Fiction|1994|H|Crime,Thriller,Comedy|Quentin Tarantino|John Travolta,Samuel L. Jackson,Uma Thurman|hitmen,gangster,dark humour
+Fight Club|1999|H|Drama,Thriller|David Fincher|Brad Pitt,Edward Norton|underground,identity,rebellion
+La La Land|2016|H|Musical,Romance,Drama|Damien Chazelle|Ryan Gosling,Emma Stone|jazz,dreams,ambition
+The Notebook|2004|H|Romance,Drama|Nick Cassavetes|Ryan Gosling,Rachel McAdams|love story,memory,class
+Superbad|2007|H|Comedy|Greg Mottola|Jonah Hill,Michael Cera|high school,party,teen
+The Hangover|2009|H|Comedy|Todd Phillips|Bradley Cooper,Ed Helms,Zach Galifianakis|bachelor party,friends,chaos
+Mad Max: Fury Road|2015|H|Action,Adventure,Sci-Fi|George Miller|Tom Hardy,Charlize Theron|post-apocalyptic,chase,desert
+Gravity|2013|H|Sci-Fi,Thriller,Drama|Alfonso Cuaron|Sandra Bullock,George Clooney|space,survival,isolation
+The Prestige|2006|H|Mystery,Thriller,Drama|Christopher Nolan|Hugh Jackman,Christian Bale,Michael Caine|magician,rivalry,twist
+Whiplash|2014|H|Drama,Musical|Damien Chazelle|Miles Teller,J.K. Simmons|drummer,obsession,mentor
+Catch Me If You Can|2002|H|Biography,Crime,Comedy|Steven Spielberg|Leonardo DiCaprio,Tom Hanks|con artist,fbi,true story
+The Social Network|2010|H|Biography,Drama|David Fincher|Jesse Eisenberg,Andrew Garfield|startup,betrayal,true story
+Rocky|1976|H|Sport,Drama|John G. Avildsen|Sylvester Stallone,Talia Shire|boxing,underdog,determination
+Finding Nemo|2003|H|Animation,Family,Adventure,Comedy|Andrew Stanton|Albert Brooks,Ellen DeGeneres|ocean,father son,friendship
+Se7en|1995|H|Crime,Mystery,Thriller|David Fincher|Brad Pitt,Morgan Freeman|serial killer,detective,dark
+Mamma Mia!|2008|H|Musical,Comedy,Romance|Phyllida Lloyd|Meryl Streep,Amanda Seyfried|wedding,island,mother daughter
+3 Idiots|2009|B|Comedy,Drama|Rajkumar Hirani|Aamir Khan,R. Madhavan,Sharman Joshi|engineering college,friendship,education
+Dangal|2016|B|Sport,Biography,Drama|Nitesh Tiwari|Aamir Khan,Fatima Sana Shaikh|wrestling,father daughter,true story
+Lagaan|2001|B|Sport,Drama,Musical|Ashutosh Gowariker|Aamir Khan,Gracy Singh|cricket,british raj,village
+Dilwale Dulhania Le Jayenge|1995|B|Romance,Drama,Musical|Aditya Chopra|Shah Rukh Khan,Kajol|europe,family,love story
+Kabhi Khushi Kabhie Gham|2001|B|Drama,Romance,Family,Musical|Karan Johar|Shah Rukh Khan,Kajol,Amitabh Bachchan|family,father son,reunion
+Sholay|1975|B|Action,Adventure,Drama|Ramesh Sippy|Amitabh Bachchan,Dharmendra,Sanjeev Kumar|bandit,friendship,revenge
+Gully Boy|2019|B|Drama,Musical|Zoya Akhtar|Ranveer Singh,Alia Bhatt|rap,mumbai,dreams,ambition
+Zindagi Na Milegi Dobara|2011|B|Comedy,Drama,Adventure|Zoya Akhtar|Hrithik Roshan,Farhan Akhtar,Abhay Deol|road trip,friendship,spain
+PK|2014|B|Comedy,Drama,Sci-Fi|Rajkumar Hirani|Aamir Khan,Anushka Sharma,Sanjay Dutt|alien,religion,satire
+Bajrangi Bhaijaan|2015|B|Drama,Adventure,Family|Kabir Khan|Salman Khan,Kareena Kapoor,Nawazuddin Siddiqui|lost child,journey,humanity
+Queen|2013|B|Comedy,Drama,Adventure|Vikas Bahl|Kangana Ranaut,Lisa Haydon|solo trip,self discovery,europe
+Andhadhun|2018|B|Thriller,Crime,Comedy,Mystery|Sriram Raghavan|Ayushmann Khurrana,Tabu,Radhika Apte|blind pianist,murder,twist,dark humour
+Drishyam|2015|B|Thriller,Crime,Drama,Mystery|Nishikant Kamat|Ajay Devgn,Tabu,Shriya Saran|family,cover up,police
+Kahaani|2012|B|Thriller,Mystery|Sujoy Ghosh|Vidya Balan,Parambrata Chatterjee|kolkata,missing husband,twist
+Chak De! India|2007|B|Sport,Drama|Shimit Amin|Shah Rukh Khan,Vidya Malhotra|hockey,women,team,redemption
+Rang De Basanti|2006|B|Drama,Musical|Rakeysh Omprakash Mehra|Aamir Khan,Siddharth,Sharman Joshi,R. Madhavan|patriotism,youth,corruption
+Taare Zameen Par|2007|B|Drama,Family|Aamir Khan|Darsheel Safary,Aamir Khan|dyslexia,child,teacher,education
+Dil Chahta Hai|2001|B|Comedy,Drama,Romance|Farhan Akhtar|Aamir Khan,Saif Ali Khan,Akshaye Khanna|friendship,goa,love,youth
+Jab We Met|2007|B|Romance,Comedy,Musical|Imtiaz Ali|Shahid Kapoor,Kareena Kapoor|train,road trip,love story
+Gangs of Wasseypur|2012|B|Crime,Action,Drama|Anurag Kashyap|Manoj Bajpayee,Nawazuddin Siddiqui,Richa Chadha|coal mafia,revenge,gangster
+Tumbbad|2018|B|Horror,Fantasy,Thriller|Rahi Anil Barve|Sohum Shah|greed,folklore,curse
+Bhaag Milkha Bhaag|2013|B|Sport,Biography,Drama|Rakeysh Omprakash Mehra|Farhan Akhtar,Sonam Kapoor|runner,partition,true story
+Krrish|2006|B|Sci-Fi,Action,Adventure,Family|Rakesh Roshan|Hrithik Roshan,Priyanka Chopra|superhero,alien,father son
+Dhoom 2|2006|B|Action,Crime,Thriller,Romance|Sanjay Gadhvi|Hrithik Roshan,Aishwarya Rai,Abhishek Bachchan|heist,thief,chase
+Pathaan|2023|B|Action,Thriller|Siddharth Anand|Shah Rukh Khan,Deepika Padukone,John Abraham|spy,terrorism,mission
+Piku|2015|B|Comedy,Drama,Family|Shoojit Sircar|Amitabh Bachchan,Deepika Padukone,Irrfan Khan|father daughter,road trip,kolkata
+Swades|2004|B|Drama|Ashutosh Gowariker|Shah Rukh Khan,Gayatri Joshi|nasa,village,homeland
+Kal Ho Naa Ho|2003|B|Romance,Drama,Comedy,Musical|Nikkhil Advani|Shah Rukh Khan,Saif Ali Khan,Preity Zinta|new york,love triangle,sacrifice
+Barfi!|2012|B|Comedy,Drama,Romance|Anurag Basu|Ranbir Kapoor,Priyanka Chopra,Ileana D'Cruz|deaf mute,darjeeling,love story
+Super 30|2019|B|Biography,Drama|Vikas Bahl|Hrithik Roshan,Mrunal Thakur|mathematics,teacher,true story`;
+const D=RAW.split("\n").map((l,i)=>{const[t,y,n,g,d,c,k]=l.split("|");return{id:i,title:t,year:+y,ind:n,genres:g.split(","),dir:d,cast:c.split(","),kw:k}});
+const tk=s=>s.toLowerCase().replace(/[^a-z0-9]/g,"");
+function toks(m){const a=[],add=(w,n)=>{for(let i=0;i<n;i++)a.push(w)};
+  m.genres.forEach(g=>add("g"+tk(g),3));add("d"+tk(m.dir),2);m.cast.forEach(c=>add("c"+tk(c),2));
+  m.kw.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>2).forEach(w=>add("k"+w,2));return a}
+const docs=D.map(m=>{const c={};toks(m).forEach(w=>c[w]=(c[w]||0)+1);return c}),df={};
+docs.forEach(c=>Object.keys(c).forEach(w=>df[w]=(df[w]||0)+1));
+const V=docs.map(c=>{const v={};let n=0;for(const w in c){const x=(1+Math.log(c[w]))*(Math.log((1+D.length)/(1+df[w]))+1);v[w]=x;n+=x*x}n=Math.sqrt(n);for(const w in v)v[w]/=n;return v});
+function why(m,L){const o=[],d=L.find(x=>x.dir===m.dir);if(d)o.push("Same director, "+m.dir);
+  const c=[...new Set(L.flatMap(x=>x.cast).filter(x=>m.cast.includes(x)))];if(c.length)o.push("Stars "+c.slice(0,2).join(" and "));
+  const g=[...new Set(L.flatMap(x=>x.genres).filter(x=>m.genres.includes(x)))];if(g.length)o.push("Shares "+g.slice(0,3).join(", ").toLowerCase());
+  return o.join("; ")}
+function recommend(liked,ind){const p={};liked.forEach(i=>{for(const w in V[i])p[w]=(p[w]||0)+V[i][w]/liked.length});
+  const pn=Math.sqrt(Object.values(p).reduce((s,x)=>s+x*x,0))||1,out=[];
+  D.forEach((m,i)=>{if(liked.includes(i)||(ind&&m.ind!==ind))return;let s=0;for(const w in V[i])if(p[w])s+=V[i][w]*p[w];out.push({m,s:s/pn})});
+  out.sort((a,b)=>b.s-a.s);const top=out.slice(0,8),mx=top[0]?top[0].s:1,L=liked.map(i=>D[i]);
+  return top.map(r=>({m:r.m,pct:Math.round(r.s/mx*100),why:why(r.m,L)}))}
+const $=s=>document.querySelector(s);let liked=[],ind="";
+const NAMES={"":"All movies",B:"Bollywood",H:"Hollywood"};
+function render(){
+  $("#chips").innerHTML=liked.map(i=>`<span class="chip">${D[i].title}<button aria-label="Remove ${D[i].title}" data-rm="${i}">&times;</button></span>`).join("")+(liked.length>1?`<button class="link" data-clear>Clear all</button>`:"");
+  $("#quick").hidden=liked.length>0;
+  $("#seg").innerHTML=Object.keys(NAMES).map(k=>`<button aria-pressed="${ind===k}" data-ind="${k}">${NAMES[k]}</button>`).join("");
+  if(!liked.length){$("#out").innerHTML=`<p class="empty">Your recommendations will show up here.</p>`;return}
+  $("#out").innerHTML=`<h2>Recommended for you</h2><p class="lead">Because you liked ${liked.map(i=>D[i].title).join(", ")}</p>`+
+   recommend(liked,ind).map(r=>`<div class="row"><div class="m">${r.pct}%<div class="meter"><i style="width:${r.pct}%"></i></div></div>
+   <div><div class="t">${r.m.title}<span class="y">${r.m.year}</span><span class="badge ${r.m.ind}">${r.m.ind=="B"?"Bollywood":"Hollywood"}</span></div>
+   <div class="g">${r.m.genres.join(", ")}</div><div class="why">${r.why}</div></div>
+   <button class="add" data-add="${r.m.id}">Add to my picks</button></div>`).join("")}
+function add(i){if(!liked.includes(i))liked.push(i);$("#q").value="";$("#sug").hidden=true;render()}
+$("#qb").innerHTML=["3 Idiots","Inception","Dangal","La La Land","Andhadhun"].map(t=>`<button data-add="${D.findIndex(m=>m.title==t)}">${t}</button>`).join("");
+$("#q").addEventListener("input",e=>{const v=e.target.value.trim().toLowerCase(),s=$("#sug");
+  const r=v?D.filter(m=>m.title.toLowerCase().includes(v)&&!liked.includes(m.id)).slice(0,6):[];
+  s.hidden=!r.length;s.innerHTML=r.map(m=>`<button data-add="${m.id}">${m.title}<small>${m.year}, ${m.ind=="B"?"Bollywood":"Hollywood"}</small></button>`).join("")});
+$("#q").addEventListener("keydown",e=>{if(e.key==="Enter"){const b=$("#sug button");if(b)add(+b.dataset.add)}});
+document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t){$("#sug").hidden=true;return}
+  if(t.dataset.add!==undefined)add(+t.dataset.add);
+  else if(t.dataset.rm!==undefined){liked=liked.filter(i=>i!==+t.dataset.rm);render()}
+  else if(t.dataset.clear!==undefined){liked=[];render()}
+  else if(t.dataset.ind!==undefined){ind=t.dataset.ind;render()}});
+render();
+</script></body></html>
